@@ -1786,6 +1786,7 @@ def test_annotated_call_with_injection():
     injector = Injector([configure])
     assert injector.call_with_injection(fun) == 123
 
+
 def test_with_injector_wrapper():
     UserID = Annotated[int, "user_id"]
 
