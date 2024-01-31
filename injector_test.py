@@ -1800,3 +1800,35 @@ def test_with_injector_wrapper():
     injector = Injector([configure])
 
     assert injector.get(Data).user_id == 123
+
+
+def test_annotated_in_injection_configuration():
+    UserID = Annotated[int, "user_id"]
+
+    def configure(binder):
+        binder.bind(UserID, to=123)
+
+    @inject
+    @dataclass
+    class Data:
+        user_id: Annotated[int, "user_id"]
+
+    injector = Injector([configure])
+
+    assert injector.get(Data).user_id == 123
+
+
+def test_bind_to_annotated_directly():
+    def configure(binder):
+        # works at runtime, mypy complains:
+        # Argument 1 to "bind" of "Binder" has incompatible type "object"; expected "type[str]"
+        binder.bind(Annotated[int, "user_id"], to=123)
+
+    @inject
+    @dataclass
+    class Data:
+        user_id: Annotated[int, "user_id"]
+
+    injector = Injector([configure])
+
+    assert injector.get(Data).user_id == 123
